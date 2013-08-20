@@ -1,0 +1,18 @@
+{% extends "base.dtl" %}
+
+
+{% block title %}Fun : {{name}}{% endblock %}
+
+{% block body %}
+
+
+<div class="row-fluid">
+<div class="span4">
+	<form method="post" action="/funrunner" class="well" id="command_form">
+		<input name="command"/>
+		<input type="submit" class="btn btn-primary btn-mini" value="Ausführen">
+	</form>
+</div>
+</div>
+
+{% endblock %}

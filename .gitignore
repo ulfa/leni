@@ -1,0 +1,7 @@
+erl_crash.dump
+log/*
+apps/leni/ebin/*
+.eunit/
+deps
+rel/leni
+.ct_dialyzer.plt

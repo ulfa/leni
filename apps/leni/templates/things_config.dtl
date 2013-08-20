@@ -1,0 +1,19 @@
+{% extends "base_without.dtl" %}
+
+{% block title %}Things Config{% endblock %}
+
+{% block body %}
+
+{%for node, things_config in things %}
+
+<div class="well">
+<h1>Node : {{node}}</h1>
+	{%for thing, name, parameters in things_config%}
+	Name : {{name}}<br>
+	{%for entry in parameters%}
+	{%endfor%}
+	{%endfor%}
+	</div>
+{%endfor%}
+
+{% endblock %}
