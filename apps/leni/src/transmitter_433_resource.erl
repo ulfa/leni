@@ -15,6 +15,7 @@
 -export([init/1, to_html/2, content_types_provided/2, allowed_methods/2, resource_exists/2]).
 -export([process_post/2, moved_permanently/2]).
 -export([get_list_of_devices/2]).
+-export([is_authorized/2]).
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
@@ -45,7 +46,7 @@ service_available(ReqData, Context) ->
 % The AuthHead return value will be used as the value in the WWW-Authenticate header.
 %
 is_authorized(ReqData, Context) ->
-	{true, ReqData, Context}.
+	login:login(ReqData, Context). 
 
 forbidden(ReqData, Context) ->
 	{false, ReqData, Context}.
@@ -125,7 +126,7 @@ process_post(ReqData, Context) ->
 	{"number", Number} = lists:keyfind("number",1, Body),
 	{"status", Status} = lists:keyfind("status",1, Body),
 	Msg = message_util:create_message(node(), ?MODULE, "0", date:get_date_seconds(), {Switch, Number, Status}),	
-	message_util:send_message(nodes(), Msg),
+	message_util:send_message([node()|nodes()], Msg),
 	Location = "/actors/transmitter_433_driver?name=" ++ Name ++ "&node=" ++ Node, 
 	{true, wrq:do_redirect(true, wrq:set_resp_header("location", Location, ReqData)), Context}.
 %
