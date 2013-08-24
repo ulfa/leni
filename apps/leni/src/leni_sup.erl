@@ -18,7 +18,7 @@
 -export([init/1]).
 
 %% Helper macro for declaring children of supervisor
--define(CHILD(I, Type), {I, {I, start_link, []}, permanent, 5000, Type, [I]}).
+-define(CHILD(I, Type, Arg), {I, {I, start_link, [Arg]}, permanent, 5000, Type, [I]}).
 
 %% ===================================================================
 %% API functions
@@ -42,5 +42,5 @@ init([]) ->
                  {log_dir, "priv/log"},
                  {dispatch, Dispatch}],               
     Web = {webmachine_mochiweb, {webmachine_mochiweb, start, [WebConfig]}, permanent, 5000, worker, dynamic},
-    Processes = [Web],
+    Processes = [Web, ?CHILD(account_sup, supervisor, [leni])],
     {ok, { {one_for_one, 10, 10}, Processes} }.
