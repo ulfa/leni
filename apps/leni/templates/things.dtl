@@ -1,0 +1,30 @@
+{% extends "base_without.dtl" %}
+
+{% block title %}Things{% endblock %}
+
+{% block body %}
+{%for node, list_of_things in things %}
+
+<div class="well">
+	<h1>{{node}}</h1>  
+	{% if list_of_things %}
+		<table class="table">  
+        	<thead>  
+          	  <tr>  
+				  <th>Name</th> 				  				  
+				  <th>Description</th>  				
+			  </tr>  
+			</thead>  
+			{% for pid, name, description, driver in list_of_things %}		
+			<tbody>  
+				<tr> 					
+					<td><a href="/things/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
+					<td> {{description}} </td>
+				</tr>  
+			</tbody>
+			{% endfor %}
+		</table>
+	{% endif %}
+	</div>
+{% endfor %}
+{% endblock %}
