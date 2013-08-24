@@ -1,6 +1,7 @@
 erl_crash.dump
 log/*
 apps/leni/ebin/*
+apps/leni/priv/accounts.conf
 .eunit/
 deps
 rel/leni
