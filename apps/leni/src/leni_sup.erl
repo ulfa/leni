@@ -38,7 +38,7 @@ init([]) ->
                           "..", "priv", "dispatch.conf"])),
     WebConfig = [
                  {ip, Ip},
-                 {port, 8001},
+                 {port, 8080},
                  {log_dir, "priv/log"},
                  {dispatch, Dispatch}],               
     Web = {webmachine_mochiweb, {webmachine_mochiweb, start, [WebConfig]}, permanent, 5000, worker, dynamic},
