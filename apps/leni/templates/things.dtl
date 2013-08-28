@@ -18,7 +18,7 @@
 			{% for pid, name, description, driver in list_of_things %}		
 			<tbody>  
 				<tr> 					
-					<td><a href="/things/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
+					<td><a href="/actors/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
 					<td> {{description}} </td>
 				</tr>  
 			</tbody>
