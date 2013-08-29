@@ -7,7 +7,7 @@
 <div class="container">
 		<div class="row">
 {%for photo, date in photos%}
-			<div class="span4"><img src="/photos/{{photo}}" class="img-rounded">{{date}}</div>
+			<div class="span4"><img src="/photos/{{photo}}" class="img-rounded">{{date|linebreaks}}</div>
 {%endfor%}
 		</div>
 
