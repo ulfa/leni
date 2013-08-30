@@ -9,8 +9,11 @@
 <div class="well">
 <h1>Node : {{node}}</h1>
 	{%for thing, name, parameters in things_config%}
-	Name : {{name}}<br>
-	{%for entry in parameters%}
+	
+	{%for key,value in parameters%}
+		{%if key == "activ" and value == "true"%}
+		<p><strong>Thing : {{name}}</p>
+		{%endif%}
 	{%endfor%}
 	{%endfor%}
 	</div>

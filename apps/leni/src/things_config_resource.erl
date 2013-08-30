@@ -235,16 +235,65 @@ get_config(Nodes, Config) ->
 	{Result, BN} = rpc:multicall(Nodes, node_config, Config, [], 100),
  	case [R || R <- Result, is_not_badrpc(R)] of 
  		[]-> [];
- 		A -> lists:flatten(A) 
+ 		A -> convert_config(lists:flatten(A)) 
  	end.
 
 is_not_badrpc({badrpc, Reason}) ->
 	false;
 is_not_badrpc(Any) ->
 	true.
+
+convert_config(Config) when is_list(Config) ->
+	lists:foldr(fun(E, All) -> [convert_config1(E)|All] end, [], Config).
+convert_config1({Node, Config})  ->
+	{Node, lists:foldr(fun(E, All) -> [convert_entry(E)|All] end, [], Config)}.
+convert_entry(Entry) ->
+	{thing, Name, Parameter} = Entry,
+	{driver, T, L} = lists:keyfind(driver, 1, Parameter), 
+	{thing, Name, lists:keyreplace(driver, 1, Parameter, {driver, [T, L]})}.
+
 %% --------------------------------------------------------------------
 %%% Test functions
 %% --------------------------------------------------------------------
 -include_lib("eunit/include/eunit.hrl").
 -ifdef(TEST).
+convert_config_test() ->
+	Config = [{horst@erwin,[{thing, "Cam_office", 
+	[
+	{type, actor}, 
+	{driver, {usb_cam_driver, handle_msg}, [{path, "/home/pi/photos"}, {last_shot, 0}]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "USB cam in my office"}
+	]},
+{thing, "Mail_Client", 
+	[
+	{type, actor}, 
+	{driver, {mail_client_driver, handle_msg}, [{init, true, [{options, [{use_ssl, true}, {host, "smtp.gmail.com"}, {port, 465}]}, {sender, "Sender"}, {password, "Password"}, {to, "To"}, {subject, "motion detected in the basement"}]}]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "Mail Client for sending notification."}
+	]}]}],
+
+	Config_Result = [{horst@erwin, [{thing, "Cam_office", 
+	[
+	{type, actor}, 
+	{driver, [{usb_cam_driver, handle_msg}, [{path, "/home/pi/photos"}, {last_shot, 0}]]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "USB cam in my office"}
+	]},
+{thing, "Mail_Client", 
+	[
+	{type, actor}, 
+	{driver, [{mail_client_driver, handle_msg}, [{init, true, [{options, [{use_ssl, true}, {host, "smtp.gmail.com"}, {port, 465}]}, {sender, "Sender"}, {password, "Password"}, {to, "To"}, {subject, "motion detected in the basement"}]}]]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "Mail Client for sending notification."}
+	]}]}],
+	?assertEqual(Config_Result, convert_config(Config)).
 -endif.
