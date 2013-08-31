@@ -12,7 +12,7 @@
 	
 	{%for key,value in parameters%}
 		{%if key == "activ" and value == "true"%}
-		<p><strong>Thing : {{name}}</p>
+			<p><strong>Thing : {{name}}</p>		
 		{%endif%}
 	{%endfor%}
 	{%endfor%}
