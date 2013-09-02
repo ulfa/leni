@@ -126,7 +126,7 @@ process_post(ReqData, Context) ->
 	{"number", Number} = lists:keyfind("number",1, Body),
 	{"status", Status} = lists:keyfind("status",1, Body),
 	Msg = message_util:create_message(node(), ?MODULE, "0", date:get_date_seconds(), {Switch, Number, Status}),	
-	message_util:send_message([node()|nodes()], Msg),
+	message_util:send_message([list_to_atom(Node)], Msg),
 	Location = "/actors/transmitter_433_driver?name=" ++ Name ++ "&node=" ++ Node, 
 	{true, wrq:do_redirect(true, wrq:set_resp_header("location", Location, ReqData)), Context}.
 %

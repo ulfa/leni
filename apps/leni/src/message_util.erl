@@ -25,6 +25,7 @@ create_message(Node, Sensor, Id, Time, Body) ->
 send_message(Nodes, Message) ->
 	send_message(Nodes, 'actor_group', Message).    
 send_message(Nodes, Target, Message) ->
+	lager:info("send message : ~p, ~p, ~p", [Nodes, Target, Message]),
 	rpc:abcast(Nodes, Target, Message).    
 
 %% --------------------------------------------------------------------
