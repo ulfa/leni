@@ -10,14 +10,16 @@
 		<table class="table">  
         	<thead>  
           	  <tr>  
-				  <th>Type</th>  				  
+				  <th>Type</th>  		
+				  <th>Started</th> 				  				  
 				  <th>Description</th>  
 			  </tr>  
 			</thead>  
-			{% for pid, name, description, driver in list_of_actors %}		
+			{% for pid, name, start_time, description, driver in list_of_actors %}		
 			<tbody>  
 				<tr> 					
 					<td><a href="/actors/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
+					<td> {{start_time}} </td>
 					<td> {{description}} </td>
 				</tr>  
 			</tbody>

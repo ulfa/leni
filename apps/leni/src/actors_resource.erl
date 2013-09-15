@@ -219,7 +219,7 @@ get_actors(Nodes) ->
 	{Result, BN} = rpc:multicall(Nodes, horst, get_things, [actor], 1000),
 	case [R || R <- Result, is_not_badrpc(R)] of 
 		[] -> [];
-		A -> lists:flatten(A) 
+		A -> resource_util:convert_nodes(lists:flatten(A)) 
 	end.
 	
 is_not_badrpc({badrpc, Reason}) ->

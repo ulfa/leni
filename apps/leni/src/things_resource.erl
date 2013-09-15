@@ -219,7 +219,7 @@ get_things(Nodes) ->
 	{Result, BN} = rpc:multicall(Nodes, horst, get_things, [], 1000),
 	case [R || R <- Result, is_not_badrpc(R)] of 
 		[] -> [];
-		A -> lists:flatten(A) 
+		A -> resource_util:convert_nodes(lists:flatten(A)) 
 	end.
 	
 is_not_badrpc({badrpc, Reason}) ->
@@ -229,10 +229,10 @@ is_not_badrpc(Any) ->
 
 create_links() ->
 	[].
+
 %% --------------------------------------------------------------------
 %%% Test functions
 %% --------------------------------------------------------------------
 -include_lib("eunit/include/eunit.hrl").
 -ifdef(TEST).
-
 -endif.

@@ -10,14 +10,16 @@
 		<table class="table">  
         	<thead>  
           	  <tr>  
-				  <th>Type</th>  
+				  <th>Type</th> 
+				  <th>Started</th> 	 
 				  <th>Description</th>  
 			  </tr>  
 			</thead>  
-			{% for pid, name, description, driver in list_of_sensors %}		
+			{% for pid, name, start_time, description, driver in list_of_sensors %}		
 			<tbody>  
 				<tr> 				
 					<td>{{ name }}</a></td>
+					<td> {{start_time}} </td>
 					<td> {{description}} </td>
 				</tr>  
 			</tbody>
