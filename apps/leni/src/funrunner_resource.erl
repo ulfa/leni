@@ -231,7 +231,7 @@ to_html(ReqData, Context) ->
     {Content, ReqData, Context}.
 
 to_json(ReqData, Context) ->
-	{"asdsads", ReqData, Context}.
+	{"not implemented yet", ReqData, Context}.
 
 get_fun_for_funname(Node, Fun_name) ->
 	case rpc:call(list_to_atom(Node), funrunner, list, [Fun_name]) of 
