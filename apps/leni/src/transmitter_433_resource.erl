@@ -229,10 +229,10 @@ to_html(ReqData, Context) ->
     {Content, ReqData, Context}.  
 
 get_list_of_devices(Node, Name) ->
-	case rpc:call(Node, thing, get_driver, [Name]) of 
-		{badrpc, Reason} -> lager:error("thing:get_driver(~p) got error : ~p", [Name, Reason]),
+	case rpc:call(Node, thing, get_module_config, [Name]) of 
+		{badrpc, Reason} -> lager:error("thing:get_module_config(~p) got error : ~p", [Name, Reason]),
 							[];
-		{Driver, Config} -> Config
+		Config -> Config
 	end.
 
 is_not_badrpc({badrpc, Reason}) ->
