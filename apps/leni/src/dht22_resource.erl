@@ -218,10 +218,10 @@ to_html(ReqData, Context) ->
     {Content, ReqData, Context}.  
 
 get_data(Node, Name) when is_list(Node)->
-    case rpc:call(list_to_atom(Node), thing, get_driver, [Name]) of 
+    case rpc:call(list_to_atom(Node), thing, get_module_config, [Name]) of 
         {badrpc, Reason} -> lager:error("got error during call ~p thing:get_driver(~p) with reason ~p", [Node, Name, Reason]),
                             [];
-        {Driver, Config} -> convert_timestamp_to_date(proplists:get_value(data, Config, []))
+        Config -> convert_timestamp_to_date(proplists:get_value(data, Config, []))
     end.
 
 convert_timestamp_to_date(List_of_temps) ->
