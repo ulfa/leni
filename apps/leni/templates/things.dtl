@@ -3,10 +3,13 @@
 {% block title %}Things{% endblock %}
 
 {% block body %}
-{%for node, list_of_things in things %}
 
 <div class="well">
-	<h1>{{node}}</h1>  
+<h1>Actors</h1>
+{%for node, list_of_things in actor %}
+
+<div class="well">
+	<h2>{{node}}</h2>  
 	{% if list_of_things %}
 		<table class="table">  
         	<thead>  
@@ -29,4 +32,35 @@
 	{% endif %}
 	</div>
 {% endfor %}
+</div>
+
+<div class="well">
+<h1>Sensors</h1>
+{%for node, list_of_things in sensor %}
+
+<div class="well">
+	<h2>{{node}}</h2>  
+	{% if list_of_things %}
+		<table class="table">  
+        	<thead>  
+          	  <tr>  
+				  <th>Name</th>
+				  <th>Started</th> 				  				  
+				  <th>Description</th>  				
+			  </tr>  
+			</thead>  
+			{% for pid, name, start_time, description, driver in list_of_things %}		
+			<tbody>  
+				<tr> 					
+					<td><a href="/sensors/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
+					<td> {{start_time}} </td>
+					<td> {{description}} </td>
+				</tr>  
+			</tbody>
+			{% endfor %}
+		</table>
+	{% endif %}
+	</div>
+{% endfor %}
+</div>
 {% endblock %}
