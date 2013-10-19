@@ -8,5 +8,8 @@
                   stdlib
                  ]},
   {mod, { leni_app, []}},
-  {env, [{timer, 5000}]}
+  {env, [
+        {timer, 5000},
+        {peers, ["127.0.0.1"]}
+        ]}
  ]}.
