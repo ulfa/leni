@@ -4,12 +4,28 @@
 
 {% block body %}
 
-{%for node, things_config in things %}
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+	{%for node, things_config in things %}
+			<li><a href="#{{node|cut:"@"}}" data-toggle="tab">{{node}}</a></li>
+	{%endfor%}
+	</ul>
 
-<div class="well">
-<h1>Node : {{node}}</h1>
+	<div class="well">
+	<div class="tab-content">
+{%for node, things_config in things %}
+	
+	{%if forloop.counter == 1%}
+    	<div id="{{node|cut:"@"}}" class="tab-pane active">
+    {% else %}
+    	<div id="{{node|cut:"@"}}" class="tab-pane">
+    {% endif %}
 	{%for thing, name, parameters in things_config%}
-		<h2>Thing : {{name}}</h2>
+		<form method="post">
+			<input type="hidden" name="node" value="{{node}}"/>
+            <input type="hidden" name="thing" value="{{name}}"/>
+     <div class="well">
+		<h2>{{name}}</h2>
 		<table class="table">
 			<thead>
 				<tr>
@@ -22,16 +38,25 @@
 			<tr>
 				<td>{{key}}</td>
 				{%if key == "activ" and value == "true"%}
-					<td><strong>{{value}}</strong></td>  
+					<td><button type="submit" class="btn btn-danger btn-small">Off</button></td>	
+					<input type="hidden" name="active" value="false"/>				
+				{%elif key == "activ" and value == "false" %}
+					<td><button type="submit" class="btn btn-primary btn-small">On</button></td>
+					<input type="hidden" name="active" value="true"/>
 				{%else%}
-					<td>{{value}}</td>
+					<td>{{value}}</td>					
 				{%endif%}
 			</tr>
 		{%endfor%}
 			</tbody>
 		</table>
-	{%endfor%}
 	</div>
+	</form>
+	{%endfor%}
+		</div>
 {%endfor%}
-
+	</div>
+	</div>
+</div>
+</div>
 {% endblock %}

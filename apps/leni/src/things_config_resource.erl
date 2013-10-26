@@ -27,7 +27,7 @@
 %% External exports
 %% --------------------------------------------------------------------
 -export([init/1, to_html/2, content_types_provided/2, allowed_methods/2, resource_exists/2]).
--export([is_authorized/2, get_config/2]).
+-export([is_authorized/2, get_config/2, process_post/2]).
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
@@ -97,7 +97,7 @@ valid_content_headers(ReqData, Context) ->
 % will be sent. Note that these are all-caps and are atoms. (single-quoted)
 %
 allowed_methods(ReqData, Context) ->
-    {['GET'], ReqData, Context}.
+    {['GET', 'POST'], ReqData, Context}.
 %
 % This is called when a DELETE request should be enacted 
 % and should return true if the deletion succeeded.
@@ -132,7 +132,14 @@ create_path(ReqData, Context) ->
 % If it succeeds, it should return true.
 %
 process_post(ReqData, Context) ->
-	{false, ReqData, Context}.
+	lager:info("got post request"),
+	Body = mochiweb_util:parse_qs(wrq:req_body(ReqData)),
+	lager:info("body : ~p", [Body]),
+	{"node", Node} = lists:keyfind("node",1, Body),
+	{"thing", Thing} = lists:keyfind("thing",1, Body),
+	{"active", Active} = lists:keyfind("active",1, Body),
+	rpc:call(erlang:list_to_atom(Node), node_config, set_active, [Thing, list_to_atom(Active)]),
+	{true, ReqData, Context}.
 %
 % This should return a list of pairs where each pair is of the form {Mediatype, Handler} 
 % where Mediatype is a string of content-type format and the Handler is an atom naming 
@@ -249,7 +256,7 @@ is_not_badrpc(Any) ->
 convert_config(Config) when is_list(Config) ->
 	lists:foldr(fun(E, All) -> [convert_config1(E)|All] end, [], Config).
 convert_config1({Node, Config})  ->
-	{Node, lists:foldr(fun(E, All) -> [convert_entry(E)|All] end, [], Config)}.
+	{atom_to_list(Node), lists:foldr(fun(E, All) -> [convert_entry(E)|All] end, [], Config)}.
 convert_entry(Entry) ->
 	{thing, Name, Parameter} = Entry,
 	{driver, T, L} = lists:keyfind(driver, 1, Parameter), 
