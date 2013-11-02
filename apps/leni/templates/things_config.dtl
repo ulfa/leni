@@ -7,11 +7,15 @@
 <div class="tabbable">
 	<ul class="nav nav-tabs">
 	{%for node, things_config in things %}
+		{%if forloop.counter == 1%}
+			<li class="active"><a href="#{{node|cut:"@"}}" data-toggle="tab">{{node}}</a></li>
+		{% else %}
 			<li><a href="#{{node|cut:"@"}}" data-toggle="tab">{{node}}</a></li>
+		{% endif %}		
 	{%endfor%}
 	</ul>
+<div class="well">
 
-	<div class="well">
 	<div class="tab-content">
 {%for node, things_config in things %}
 	
@@ -20,6 +24,7 @@
     {% else %}
     	<div id="{{node|cut:"@"}}" class="tab-pane">
     {% endif %}
+	
 	{%for thing, name, parameters in things_config%}
 		<form method="post">
 			<input type="hidden" name="node" value="{{node}}"/>
