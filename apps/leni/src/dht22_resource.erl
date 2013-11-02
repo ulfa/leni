@@ -226,9 +226,13 @@ finish_request(ReqData, Context) ->
 %%% Additional functions
 %% --------------------------------------------------------------------
 to_html(ReqData, Context) ->
+
     Node = wrq:get_qs_value("node",ReqData),
     Name = wrq:get_qs_value("name",ReqData),
-    {ok, Content} = dht22_dtl:render([{temps, get_data(Node, Name)}]),
+    Hum_temp_list = get_data(Node, Name),
+    Temp_list = create_temp_list(Hum_temp_list),
+    Hum_list = create_hum_list(Hum_temp_list),
+    {ok, Content} = dht22_dtl:render([{temp_hum_list, Hum_temp_list}, {temp_list, Temp_list}, {hum_list, Hum_list}]),
     {Content, ReqData, Context}.  
 
 get_data(Node, Name) when is_list(Node)->
@@ -240,6 +244,17 @@ get_data(Node, Name) when is_list(Node)->
 
 convert_timestamp_to_date(List_of_temps) ->
     lists:foldr(fun({Timestamp, Temp_hum}, Acc) -> [{date:timestamp_to_date(Timestamp), Temp_hum}|Acc] end, [], List_of_temps).
+
+create_temp_list([]) ->
+    [];
+create_temp_list(List) ->
+    [{T1, T} || {T1, [{temp, T}, {hum, H}]} <- List].
+
+create_hum_list([]) ->
+    [];
+create_hum_list(List) ->
+    [{T1, H} || {T1, [{temp, T}, {hum, H}]} <- List].
+
 %% --------------------------------------------------------------------
 %%% Test functions
 %% --------------------------------------------------------------------
