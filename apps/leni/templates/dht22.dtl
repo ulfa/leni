@@ -48,8 +48,17 @@
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
-        var data = google.visualization.arrayToDataTable([
 
+
+        var data = google.visualization.arrayToDataTable([
+          ['Date', 'Temp'],
+          {% for date, temp in temp_list%}
+            ['{{date}}',  {{temp}}],
+          {% endfor %}
+        ]);
+
+
+       var data1 = google.visualization.arrayToDataTable([
           ['Date', 'Humidity'],
           {% for date, hum in hum_list%}
             ['{{date}}',  {{hum}}],
