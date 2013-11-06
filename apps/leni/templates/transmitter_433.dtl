@@ -12,9 +12,9 @@
         <div class="row">
         <div class="span1">
             {% if state == "1" %}
-                <img src="/images/light_bulb_on.png" class="img-rounded">
+                <img src="/images/light_on.png" class="img-rounded">
             {% else %}
-                <img src="/images/light_bulb_off.png" class="img-rounded">
+                <img src="/images/light_off.png" class="img-rounded">
             {% endif %}
         </div>
         <div class="span1">
