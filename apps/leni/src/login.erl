@@ -29,13 +29,13 @@
 
 login(ReqData, Context) ->
     case is_peer_allowed(ReqData) of 
-        true -> lager:info("peer is allowed"),
+        true -> lager:debug("peer is allowed"),
                 {true, ReqData, Context};
         false -> case wrq:get_req_header("authorization", ReqData) of
 		  "Basic " ++ Base64 -> Str = base64:mime_decode_to_string(Base64),
 			[Account, Password] = string:tokens(Str, ":"),
 			case account:is_valid_account(Account, Password) of
-				true -> lager:info("sucessful login"),
+				true -> lager:debug("sucessful login"),
 						{true, ReqData, Context};
                 false-> lager:error("Account : ~p, password: ~p  wrong", [Account, Password]),
                 		{"Basic realm=Webmachine", ReqData, Context}
