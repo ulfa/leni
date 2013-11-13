@@ -38,7 +38,7 @@ convert_nodes(Nodes) ->
 %%% Internal functions
 %% --------------------------------------------------------------------
 convert_date_in_things(Things) ->
-    lists:foldl(fun({Pid, Name, Date, Description, Driver}, Acc) -> [{Pid, Name, date:get_formated_date_for_now(Date), Description, Driver}|Acc] end, [], Things).  
+    lists:foldl(fun({Pid, Name, Date, Description, Driver, Icon}, Acc) -> [{Pid, Name, date:get_formated_date_for_now(Date), Description, Driver, Icon}|Acc] end, [], Things).  
 
 %% --------------------------------------------------------------------
 %%% Test functions

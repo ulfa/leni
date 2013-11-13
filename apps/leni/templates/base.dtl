@@ -30,10 +30,6 @@
 	    				<a class="brand" href="/">Leni</a>			
 						<div class="nav-collapse in collapse" style="height: auto;">	
 		   	  				<ul class="nav">				  		
-				  				<li class="divider-vertical"></li>				
-								<li><a href="/actors">Actors</a></li>
-								<li class="divider-vertical"></li>
-								<li><a href="/sensors">Sensors</a></li>					
 								<li class="divider-vertical"></li>
 								<li><a href="/messages_config">Messages</a></li>	
 								<li class="divider-vertical"></li>

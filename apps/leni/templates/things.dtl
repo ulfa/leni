@@ -4,8 +4,19 @@
 
 {% block body %}
 
+<div class="tabbable">
+        <ul class="nav nav-tabs">
+                <li class="active"><a href="#actors" data-toggle="tab">Actors</a></li>
+                <li><a href="#sensors" data-toggle="tab">Sensors</a></li>
+        </ul>
+
+
+
+<div class="tab-content">
+        <div id="actors" class="tab-pane active">
+
 <div class="well">
-<h1>Actors</h1>
+
 {%for node, list_of_things in actor %}
 
 <div class="well">
@@ -13,15 +24,17 @@
 	{% if list_of_things %}
 		<table class="table">  
         	<thead>  
-          	  <tr>  
+          	  <tr>
+          	  	  <th>Icon</th>  
 				  <th>Name</th>
 				  <th>Started</th> 				  				  
 				  <th>Description</th>  				
 			  </tr>  
 			</thead>  
-			{% for pid, name, start_time, description, driver in list_of_things %}		
+			{% for pid, name, start_time, description, driver , icon in list_of_things %}		
 			<tbody>  
-				<tr> 					
+				<tr>
+					<td><img src="/files/{{node}}/{{icon}}" class="img-rounded"></td> 					
 					<td><a href="/actors/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
 					<td> {{start_time}} </td>
 					<td> {{description}} </td>
@@ -33,9 +46,14 @@
 	</div>
 {% endfor %}
 </div>
+</div>
+
+
+
+        <div id="sensors" class="tab-pane">
 
 <div class="well">
-<h1>Sensors</h1>
+
 {%for node, list_of_things in sensor %}
 
 <div class="well">
@@ -44,14 +62,16 @@
 		<table class="table">  
         	<thead>  
           	  <tr>  
+				  <th>Icon</th>  
 				  <th>Name</th>
 				  <th>Started</th> 				  				  
 				  <th>Description</th>  				
 			  </tr>  
 			</thead>  
-			{% for pid, name, start_time, description, driver in list_of_things %}		
+			{% for pid, name, start_time, description, driver, icon in list_of_things %}		
 			<tbody>  
 				<tr> 					
+					<td><img src="/files/{{node}}/{{icon}}" class="img-rounded"></td> 	
 					<td><a href="/sensors/{{ driver }}?name={{name}}&node={{node}}">{{ name }}</a></td>
 					<td> {{start_time}} </td>
 					<td> {{description}} </td>
@@ -62,5 +82,8 @@
 	{% endif %}
 	</div>
 {% endfor %}
+</div>
+</div>
+</div>
 </div>
 {% endblock %}
