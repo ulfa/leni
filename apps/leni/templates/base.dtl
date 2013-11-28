@@ -34,7 +34,9 @@
 								<li><a href="/messages_config">Messages</a></li>	
 								<li class="divider-vertical"></li>
 								<li><a href="/things_config">Things Config</a></li>					
-								<li class="divider-vertical"></li>								
+								<li class="divider-vertical"></li>	
+                                <li><a href="/os_things">OS</a></li>                 
+                                <li class="divider-vertical"></li>              
 	    					</ul>
 						</div>
 					</div>
