@@ -16,19 +16,18 @@
 %% under the License.
 %%
 %%% -------------------------------------------------------------------
-%%% Author  : Ulf Angermann uaforum1@googlemail.com
+%%% Author  : Ulf uaforum1@googlemail.com
 %%% Description :
 %%%
 %%% Created : 
-
--module(things_resource).
+%%% -------------------------------------------------------------------
+-module(things_config_resource).
 
 %% --------------------------------------------------------------------
 %% External exports
 %% --------------------------------------------------------------------
 -export([init/1, to_html/2, content_types_provided/2, allowed_methods/2, resource_exists/2]).
--export([is_authorized/2]).
--export([get_things/2]).
+-export([is_authorized/2, get_config/2, process_post/2]).
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
@@ -37,6 +36,7 @@
 %% record definitions
 %% --------------------------------------------------------------------
 -record(context, {}).
+
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
@@ -97,7 +97,7 @@ valid_content_headers(ReqData, Context) ->
 % will be sent. Note that these are all-caps and are atoms. (single-quoted)
 %
 allowed_methods(ReqData, Context) ->
-    {['GET'], ReqData, Context}.
+    {['GET', 'POST'], ReqData, Context}.
 %
 % This is called when a DELETE request should be enacted 
 % and should return true if the deletion succeeded.
@@ -132,7 +132,14 @@ create_path(ReqData, Context) ->
 % If it succeeds, it should return true.
 %
 process_post(ReqData, Context) ->
-	{false, ReqData, Context}.
+	lager:info("got post request"),
+	Body = mochiweb_util:parse_qs(wrq:req_body(ReqData)),
+	lager:info("body : ~p", [Body]),
+	{"node", Node} = lists:keyfind("node",1, Body),
+	{"thing", Thing} = lists:keyfind("thing",1, Body),
+	{"active", Active} = lists:keyfind("active",1, Body),
+	rpc:call(erlang:list_to_atom(Node), node_config, set_active, [Thing, list_to_atom(Active)]),
+	{true, ReqData, Context}.
 %
 % This should return a list of pairs where each pair is of the form {Mediatype, Handler} 
 % where Mediatype is a string of content-type format and the Handler is an atom naming 
@@ -211,6 +218,7 @@ last_modified(ReqData, Context) ->
 %
 expires(ReqData, Context) ->
 	{undefined, ReqData, Context}.
+
 %
 % If this returns a value, it will be used as the value of the ETag header 
 % and for comparison in conditional requests.
@@ -226,28 +234,76 @@ finish_request(ReqData, Context) ->
 %%% Additional functions
 %% --------------------------------------------------------------------
 to_html(ReqData, Context) ->
-	{ok, Content} = things_dtl:render([{sensor, get_things(nodes(), sensor)}, {actor, get_things(nodes(), actor)}]),
-    {Content, ReqData, Context}. 
- 
+	Things_config = get_config([node()|nodes()], get_things_config),
+	{ok, Content} = things_config_dtl:render([{things, Things_config}]),
+    {Content, ReqData, Context}.
 
-get_things(Nodes, Type) ->
-	{Result, BN} = rpc:multicall(Nodes, horst, get_things, [Type], 1000),
-	case [R || R <- Result, is_not_badrpc(R)] of 
-		[] -> [];
-		A -> resource_util:convert_nodes(lists:flatten(A)) 
-	end.
-	
+%%
+%% get_messages_config / get_things_config
+%%
+get_config(Nodes, Config) ->
+	{Result, BN} = rpc:multicall(Nodes, node_config, Config, [], 100),
+ 	case [R || R <- Result, is_not_badrpc(R)] of 
+ 		[]-> [];
+ 		A -> convert_config(lists:flatten(A)) 
+ 	end.
+
 is_not_badrpc({badrpc, Reason}) ->
 	false;
 is_not_badrpc(Any) ->
 	true.
 
-create_links() ->
-	[].
+convert_config(Config) when is_list(Config) ->
+	lists:foldr(fun(E, All) -> [convert_config1(E)|All] end, [], Config).
+convert_config1({Node, Config})  ->
+	{atom_to_list(Node), lists:foldr(fun(E, All) -> [convert_entry(E)|All] end, [], Config)}.
+convert_entry(Entry) ->
+	{thing, Name, Parameter} = Entry,
+	{driver, T, L} = lists:keyfind(driver, 1, Parameter), 
+	{thing, Name, lists:keyreplace(driver, 1, Parameter, {driver, [T, L]})}.
 
 %% --------------------------------------------------------------------
 %%% Test functions
 %% --------------------------------------------------------------------
 -include_lib("eunit/include/eunit.hrl").
 -ifdef(TEST).
+convert_config_test() ->
+	Config = [{horst@erwin,[{thing, "Cam_office", 
+	[
+	{type, actor}, 
+	{driver, {usb_cam_driver, handle_msg}, [{path, "/home/pi/photos"}, {last_shot, 0}]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "USB cam in my office"}
+	]},
+{thing, "Mail_Client", 
+	[
+	{type, actor}, 
+	{driver, {mail_client_driver, handle_msg}, [{init, true, [{options, [{use_ssl, true}, {host, "smtp.gmail.com"}, {port, 465}]}, {sender, "Sender"}, {password, "Password"}, {to, "To"}, {subject, "motion detected in the basement"}]}]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "Mail Client for sending notification."}
+	]}]}],
+
+	Config_Result = [{horst@erwin, [{thing, "Cam_office", 
+	[
+	{type, actor}, 
+	{driver, [{usb_cam_driver, handle_msg}, [{path, "/home/pi/photos"}, {last_shot, 0}]]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "USB cam in my office"}
+	]},
+{thing, "Mail_Client", 
+	[
+	{type, actor}, 
+	{driver, [{mail_client_driver, handle_msg}, [{init, true, [{options, [{use_ssl, true}, {host, "smtp.gmail.com"}, {port, 465}]}, {sender, "Sender"}, {password, "Password"}, {to, "To"}, {subject, "motion detected in the basement"}]}]]},
+	{activ, false},
+	{timer, 0},
+	{database, []},
+	{description, "Mail Client for sending notification."}
+	]}]}],
+	?assertEqual(Config_Result, convert_config(Config)).
 -endif.

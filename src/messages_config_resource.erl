@@ -226,7 +226,7 @@ finish_request(ReqData, Context) ->
 %%% Additional functions
 %% --------------------------------------------------------------------
 to_html(ReqData, Context) ->
-	Messages_config = get_config(nodes(), get_messages_config),
+	Messages_config = get_config([node()|nodes()], get_messages_config),
 	{ok, Content} = messages_config_dtl:render([{messages, Messages_config}]),
     {Content, ReqData, Context}.
 
