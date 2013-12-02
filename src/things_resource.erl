@@ -226,7 +226,7 @@ finish_request(ReqData, Context) ->
 %%% Additional functions
 %% --------------------------------------------------------------------
 to_html(ReqData, Context) ->
-	{ok, Content} = things_dtl:render([{sensor, get_things([node()|nodes()], sensor)}, {actor, get_things(nodes(), actor)}]),
+	{ok, Content} = things_dtl:render([{sensor, get_things([node()|nodes()], sensor)}, {actor, get_things([node()|nodes()], actor)}]),
     {Content, ReqData, Context}. 
  
 
