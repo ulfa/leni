@@ -1,3 +1,4 @@
+# This project will not be supported any longer, because the project is moved inside horst
 # Overview
 
 This application is the graphical interface to horst.
